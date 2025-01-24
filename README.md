@@ -1,65 +1,134 @@
 # Zabbix-Http-Poller
 Zabbix Http Poller 
 [TR]
-Zabbix İçin HTTP Poller Süreçlerini Optimize Etme
+# Zabbix HTTP Poller Processes Utilization Sorunu ve Çözümü
 
-Amaç:
-Zabbix sunucusunda karşılaşılan "Utilization of HTTP poller processes over 75%" uyarısı, HTTP poller süreçlerinin yoğun bir şekilde kullanıldığını gösterir. Bu rehberde, HTTP poller süreçlerini artırma adımları anlatılmaktadır.
+## 📖 Problem Tanımı
+Zabbix server üzerinde "Utilization of HTTP poller processes over 75%" uyarısı, Zabbix'in HTTP poller süreçlerinin aşırı yüklendiğini ve kaynakların yetersiz kalmaya başladığını ifade eder. Bu durum, Zabbix'in HTTP tabanlı kontroller için yeterli poller sürecine sahip olmadığını gösterir. 
 
-HTTP Poller Süreçlerini Artırma
+Bu sorun, aşağıdaki durumlarda ortaya çıkabilir:
+- HTTP poller süreçlerinin sayısının yetersiz olması.
+- İzlenen HTTP kontrollerinin sayısının hızla artması.
+- Yanlış yapılandırılmış kontrol aralıklarının Zabbix server'ı gereksiz yere yorması.
 
-HTTP poller süreçlerini artırarak, Zabbix sunucunuzun HTTP tabanlı talepleri daha verimli bir şekilde işlemesini sağlayabilirsiniz.
+---
 
-Adımlar:
+## 🚀 Çözüm Adımları
 
-Zabbix Sunucu Yapılandırma Dosyasını Açın:
-Aşağıdaki komutu kullanarak zabbix_server.conf dosyasını düzenlemek üzere açın:
+### 1. HTTP Poller Süreçlerinin İzlenmesi
+Zabbix Server log dosyalarını kontrol ederek HTTP poller süreçlerinde herhangi bir hata veya yetersizlik olup olmadığını doğrulayın:
+
+tail -f /var/log/zabbix/zabbix_server.log
+
+2. HTTP Poller Süreçlerini Artırın
+Zabbix Server'ın konfigürasyon dosyasına erişerek, HTTP poller süreçlerini artırabilirsiniz:
 
 sudo nano /etc/zabbix/zabbix_server.conf
 
-StartHTTPPollers Parametresini Bulun veya Ekleyin:
-Dosyada StartHTTPPollers satırını bulun. Eğer mevcut değilse, dosyaya aşağıdaki satırı ekleyin:
+Değiştirilecek satır:
+
+StartHTTPPollers=5
+
+Bu değeri mevcut yükünüze bağlı olarak artırabilirsiniz. Örneğin:
 
 StartHTTPPollers=10
 
-Varsayılan değer genellikle 5tir. Trafik yoğunluğuna göre bu değeri 10 veya daha yüksek bir sayı yapabilirsiniz.
-
-Zabbix Sunucusunu Yeniden Başlatın:
-Değişikliklerin etkin olması için Zabbix sunucusunu yeniden başlatın:
+Değişiklikleri yaptıktan sonra Zabbix Server'ı yeniden başlatın:
 
 sudo systemctl restart zabbix-server
 
-Değişikliklerin Etkisini Kontrol Edin:
-HTTP poller süreçlerinin durumu ve kullanım oranını izlemek için Zabbix web arayüzünde şu yolu izleyin:
+3. HTTP Kontrol Aralıklarını Optimize Edin
+Zabbix'te izlenen HTTP öğelerinin kontrol aralıklarını inceleyin. Gereksiz sık kontrolleri azaltarak server üzerindeki yükü hafifletin:
 
-Monitoring > Processes > HTTP poller
+Zabbix arayüzüne giriş yapın.
+HTTP öğelerini inceleyin ve gereksiz olanları optimize edin.
+İzleme aralığını örneğin 60 saniyeden 120 saniyeye çıkarabilirsiniz.
+4. Kaynak Kullanımını İzleyin
+Değişiklik sonrası Zabbix -> Monitoring -> Queue sekmesini inceleyerek HTTP poller süreçlerinin durumu hakkında bilgi edinin. Hataların azalması gerektiğini göreceksiniz.
+
+🛠 Örnek Komutlar
+Aşağıdaki komutları kullanarak Zabbix süreçlerini kontrol edebilirsiniz:
+
+Aktif poller süreçlerini kontrol etmek için:
+
+ps aux | grep zabbix | grep poller
+
+Zabbix yapılandırma dosyasında poller süreçlerini kontrol etmek için:
+
+grep StartHTTPPollers /etc/zabbix/zabbix_server.conf
+
+📋 Notlar
+HTTP poller süreçlerinin gereksiz yere artırılması, sistem kaynaklarının gereksiz kullanımına neden olabilir. Bu nedenle süreçleri artırmadan önce mevcut iş yükünü analiz edin.
+Sorunun sürekli tekrar etmesini önlemek için HTTP kontrolleri düzenli olarak gözden geçirilmeli ve optimize edilmelidir.
+
+👩‍💻 Katkıda Bulunun
+Eğer bu dokümanı geliştirmek veya bu sorunun çözümüne dair daha fazla öneri sunmak isterseniz, katkılarınızı bekliyoruz! Yeni bir "Pull Request" açarak veya bir "Issue" bildirerek bize ulaşabilirsiniz.
+
 
 
 [ENG]
-Increasing HTTP Poller Processes
+# Zabbix HTTP Poller Processes Utilization Issue and Solution
 
-By increasing the number of HTTP poller processes, you can ensure your Zabbix server handles HTTP requests more effectively.
+## 📖 Problem Description
+The "Utilization of HTTP poller processes over 75%" warning in Zabbix indicates that the HTTP poller processes are overloaded, and the resources allocated are insufficient. This problem occurs when Zabbix cannot handle the number of HTTP checks within the available poller processes.
 
-Steps:
+Common causes of this issue:
+- Insufficient number of HTTP poller processes configured.
+- Rapid increase in monitored HTTP checks.
+- Misconfigured monitoring intervals that unnecessarily overload the Zabbix server.
 
-Open the Zabbix Server Configuration File:
-Use the following command to edit the zabbix_server.conf file:
+---
+
+## 🚀 Solution Steps
+
+### 1. Monitor HTTP Poller Processes
+Check the Zabbix server log file to identify errors or insufficient poller processes:
+
+tail -f /var/log/zabbix/zabbix_server.log
+
+
+2. Increase HTTP Poller Processes
+Modify the Zabbix server configuration file to increase the number of HTTP poller processes:
 
 sudo nano /etc/zabbix/zabbix_server.conf
 
-Locate or Add the StartHTTPPollers Parameter:
-Find the line containing StartHTTPPollers. If it does not exist, add the following line to the file:
+Update the following line:
+
+StartHTTPPollers=5
+
+Increase the value based on your system's workload, e.g.:
 
 StartHTTPPollers=10
 
-The default value is typically 5. Depending on your traffic load, you can set it to 10 or a higher value.
-
-Restart the Zabbix Server:
 Restart the Zabbix server to apply the changes:
 
 sudo systemctl restart zabbix-server
 
-Verify the Changes:
-To monitor the status and utilization of HTTP poller processes, navigate to the following in the Zabbix web interface:
+3. Optimize HTTP Monitoring Intervals
+Review and optimize the intervals for monitored HTTP items to reduce unnecessary load:
 
-Monitoring > Processes > HTTP poller
+Log in to the Zabbix interface.
+Check the HTTP items and adjust any overly frequent monitoring intervals.
+For example, change the interval from 60 seconds to 120 seconds for less critical checks.
+
+4. Monitor Resource Utilization
+After making these changes, review the performance in the Zabbix -> Monitoring -> Queue section to verify that the HTTP poller utilization has improved and errors have decreased.
+
+🛠 Example Commands
+Use the following commands to check Zabbix processes:
+
+To check active poller processes:
+
+ps aux | grep zabbix | grep poller
+
+To confirm the HTTP poller configuration:
+
+grep StartHTTPPollers /etc/zabbix/zabbix_server.conf
+
+📋 Notes
+Increasing HTTP poller processes unnecessarily can lead to inefficient resource utilization. Analyze the workload before making adjustments.
+Regularly review and optimize HTTP checks to prevent the issue from recurring.
+
+👩‍💻 Contribute
+If you'd like to improve this documentation or provide additional solutions for this issue, we welcome your contributions! Feel free to open a "Pull Request" or report an "Issue."
+
