@@ -20,7 +20,7 @@ Zabbix Server log dosyalarını kontrol ederek HTTP poller süreçlerinde herhan
 
 tail -f /var/log/zabbix/zabbix_server.log
 
-2. HTTP Poller Süreçlerini Artırın
+### 2. HTTP Poller Süreçlerini Artırın
 Zabbix Server'ın konfigürasyon dosyasına erişerek, HTTP poller süreçlerini artırabilirsiniz:
 
 sudo nano /etc/zabbix/zabbix_server.conf
@@ -37,13 +37,14 @@ Değişiklikleri yaptıktan sonra Zabbix Server'ı yeniden başlatın:
 
 sudo systemctl restart zabbix-server
 
-3. HTTP Kontrol Aralıklarını Optimize Edin
+### 3. HTTP Kontrol Aralıklarını Optimize Edin
 Zabbix'te izlenen HTTP öğelerinin kontrol aralıklarını inceleyin. Gereksiz sık kontrolleri azaltarak server üzerindeki yükü hafifletin:
 
 Zabbix arayüzüne giriş yapın.
 HTTP öğelerini inceleyin ve gereksiz olanları optimize edin.
 İzleme aralığını örneğin 60 saniyeden 120 saniyeye çıkarabilirsiniz.
-4. Kaynak Kullanımını İzleyin
+
+### 4. Kaynak Kullanımını İzleyin
 Değişiklik sonrası Zabbix -> Monitoring -> Queue sekmesini inceleyerek HTTP poller süreçlerinin durumu hakkında bilgi edinin. Hataların azalması gerektiğini göreceksiniz.
 
 🛠 Örnek Komutlar
@@ -87,7 +88,7 @@ Check the Zabbix server log file to identify errors or insufficient poller proce
 tail -f /var/log/zabbix/zabbix_server.log
 
 
-2. Increase HTTP Poller Processes
+### 2. Increase HTTP Poller Processes
 Modify the Zabbix server configuration file to increase the number of HTTP poller processes:
 
 sudo nano /etc/zabbix/zabbix_server.conf
@@ -104,14 +105,14 @@ Restart the Zabbix server to apply the changes:
 
 sudo systemctl restart zabbix-server
 
-3. Optimize HTTP Monitoring Intervals
+### 3. Optimize HTTP Monitoring Intervals
 Review and optimize the intervals for monitored HTTP items to reduce unnecessary load:
 
 Log in to the Zabbix interface.
 Check the HTTP items and adjust any overly frequent monitoring intervals.
 For example, change the interval from 60 seconds to 120 seconds for less critical checks.
 
-4. Monitor Resource Utilization
+### 4. Monitor Resource Utilization
 After making these changes, review the performance in the Zabbix -> Monitoring -> Queue section to verify that the HTTP poller utilization has improved and errors have decreased.
 
 🛠 Example Commands
